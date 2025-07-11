@@ -1,0 +1,1695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Life Coaching Interventions Database</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            padding: 30px;
+            text-align: center;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .view-toggle {
+            background: #f8f9fa;
+            padding: 20px;
+            border-bottom: 1px solid #e9ecef;
+            text-align: center;
+        }
+
+        .toggle-buttons {
+            display: inline-flex;
+            background: white;
+            border-radius: 25px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .toggle-btn {
+            padding: 12px 24px;
+            border: none;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            color: #6c757d;
+        }
+
+        .toggle-btn.active {
+            background: #4facfe;
+            color: white;
+        }
+
+        .controls {
+            padding: 20px 30px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 300px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 20px 12px 45px;
+            border: 2px solid #e9ecef;
+            border-radius: 25px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #4facfe;
+            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+        }
+
+        .filter-select {
+            padding: 12px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 25px;
+            font-size: 16px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: #4facfe;
+        }
+
+        .stats {
+            display: flex;
+            gap: 20px;
+            margin-left: auto;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .combine-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #495057;
+            cursor: pointer;
+        }
+
+        .combine-checkbox input[type="checkbox"] {
+            cursor: pointer;
+        }
+
+        .export-btn {
+            background: #4facfe;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .export-btn:hover {
+            background: #1976d2;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .modal-header {
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            color: #333;
+        }
+
+        .close-modal {
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #aaa;
+            line-height: 20px;
+        }
+
+        .close-modal:hover {
+            color: #000;
+        }
+
+        .column-list {
+            margin: 20px 0;
+        }
+
+        .column-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .column-item input[type="checkbox"] {
+            margin-right: 10px;
+            cursor: pointer;
+        }
+
+        .column-item label {
+            cursor: pointer;
+            flex: 1;
+            color: #333;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        .modal-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .modal-btn-primary {
+            background: #4facfe;
+            color: white;
+        }
+
+        .modal-btn-primary:hover {
+            background: #1976d2;
+        }
+
+        .modal-btn-secondary {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .modal-btn-secondary:hover {
+            background: #d0d0d0;
+        }
+
+        /* Category Overview Styles */
+        .category-overview {
+            padding: 30px;
+        }
+
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+        }
+
+        .category-card {
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .category-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .category-header {
+            margin-bottom: 15px;
+        }
+
+        .category-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .category-description,
+        .category-use-case,
+        .category-purpose {
+            font-size: 0.9em;
+            line-height: 1.5;
+            color: #495057;
+            background-color: rgba(255,255,255,0.7);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            border-left: 4px solid rgba(79, 172, 254, 0.3);
+        }
+
+        .category-tools {
+            margin-top: 15px;
+        }
+
+        .category-tools h4 {
+            font-size: 0.9em;
+            color: #495057;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tool-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tool-tag {
+            background: rgba(255,255,255,0.8);
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: 500;
+            color: #495057;
+            border: 1px solid rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .tool-tag:hover {
+            background: rgba(255,255,255,1);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .tool-count {
+            background: rgba(255,255,255,0.9);
+            color: #495057;
+            font-weight: 700;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        /* Table View Styles */
+        .table-view {
+            display: none;
+        }
+
+        .table-view.active {
+            display: block;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            max-height: 70vh;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        th {
+            padding: 15px 12px;
+            text-align: left;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 12px;
+        }
+
+        td {
+            padding: 15px 12px;
+            border-bottom: 1px solid #e9ecef;
+            vertical-align: top;
+            line-height: 1.4;
+        }
+
+        tbody tr {
+            transition: all 0.3s ease;
+        }
+
+        tbody tr:hover {
+            background-color: #f8f9fb;
+            transform: scale(1.001);
+        }
+
+        .intervention-name {
+            font-weight: 600;
+            color: #2c3e50;
+            min-width: 180px;
+        }
+
+        .purpose {
+            max-width: 280px;
+        }
+
+        .method {
+            max-width: 320px;
+        }
+
+        .timescale {
+            min-width: 150px;
+            font-weight: 500;
+        }
+
+        .purpose-category-col {
+            min-width: 180px;
+        }
+
+        .timescale-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .purpose-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 11px;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 5px;
+        }
+
+        .in-session {
+            background: #e8f5e8;
+            color: #2e7d2e;
+        }
+
+        .homework {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .ongoing {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .multi-session {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+            font-size: 18px;
+        }
+
+        .highlight {
+            background-color: #ffeb3b;
+            padding: 1px 2px;
+            border-radius: 2px;
+        }
+
+        .flash-highlight {
+            animation: flashHighlight 2s ease-out;
+        }
+
+        @keyframes flashHighlight {
+            0% {
+                background-color: rgba(79, 172, 254, 0.5);
+                transform: scale(1.02);
+            }
+            50% {
+                background-color: rgba(79, 172, 254, 0.3);
+            }
+            100% {
+                background-color: transparent;
+                transform: scale(1);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-box {
+                min-width: unset;
+            }
+
+            .stats {
+                margin-left: 0;
+                justify-content: center;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+
+            th, td {
+                padding: 10px 8px;
+            }
+
+            .category-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 Life Coaching Interventions Database</h1>
+            <p>Comprehensive collection of coaching activities, exercises, and interventions</p>
+        </div>
+
+        <div class="view-toggle">
+            <div class="toggle-buttons">
+                <button class="toggle-btn active" onclick="switchView('categories')">📊 Purpose Categories</button>
+                <button class="toggle-btn" onclick="switchView('table')">📋 Table View</button>
+            </div>
+        </div>
+
+        <div id="categoryView" class="category-overview">
+            <div class="category-grid" id="categoryGrid">
+                <!-- Categories will be inserted here -->
+            </div>
+        </div>
+
+        <div id="tableView" class="table-view">
+            <div class="controls">
+                <div class="search-box">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="searchInput" placeholder="Search interventions, purposes, methods...">
+                </div>
+                
+                <select id="purposeFilter" class="filter-select">
+                    <option value="all">All Purpose Categories</option>
+                    <option value="clarify">To Clarify What Matters Most</option>
+                    <option value="surface">To Surface Hidden Patterns & Root Causes</option>
+                    <option value="identity">To Build Self-Awareness & Authentic Identity</option>
+                    <option value="shift">To Shift Internal Barriers & Resistance</option>
+                    <option value="action">To Enable Consistent Action & Follow-Through</option>
+                </select>
+
+                <select id="timescaleFilter" class="filter-select">
+                    <option value="all">All Timescales</option>
+                    <option value="in-session">In-Session</option>
+                    <option value="homework">Homework</option>
+                    <option value="ongoing">Ongoing</option>
+                    <option value="multi-session">Multi-Session</option>
+                </select>
+
+                <div class="stats">
+                    <span>Total: <span id="totalCount">0</span></span>
+                    <span>Showing: <span id="visibleCount">0</span></span>
+                </div>
+
+                <label class="combine-checkbox">
+                    <input type="checkbox" id="combineSubcategories" onchange="filterData()">
+                    <span>Combine subcategories</span>
+                </label>
+
+                <button class="export-btn" onclick="showExportDialog()">
+                    📥 Export CSV
+                </button>
+            </div>
+
+            <div class="table-container">
+                <table id="interventionsTable">
+                    <thead>
+                        <tr>
+                            <th>Intervention / Exercise</th>
+                            <th>Purpose Category</th>
+                            <th>Purpose (Problem & Outcome)</th>
+                            <th>How It Works (Method)</th>
+                            <th>Typical Timescale</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- Data will be inserted here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Export Modal -->
+    <div id="exportModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close-modal" onclick="closeExportDialog()">&times;</span>
+                <h2>Export to CSV</h2>
+            </div>
+            <p>Select which columns to include in your export:</p>
+            <div class="column-list">
+                <div class="column-item">
+                    <input type="checkbox" id="col-name" checked>
+                    <label for="col-name">Intervention Name</label>
+                </div>
+                <div class="column-item">
+                    <input type="checkbox" id="col-purpose-category" checked>
+                    <label for="col-purpose-category">Purpose Category</label>
+                </div>
+                <div class="column-item">
+                    <input type="checkbox" id="col-subcategory">
+                    <label for="col-subcategory">Subcategory</label>
+                </div>
+                <div class="column-item">
+                    <input type="checkbox" id="col-purpose" checked>
+                    <label for="col-purpose">Purpose (Problem & Outcome)</label>
+                </div>
+                <div class="column-item">
+                    <input type="checkbox" id="col-method" checked>
+                    <label for="col-method">How It Works (Method)</label>
+                </div>
+                <div class="column-item">
+                    <input type="checkbox" id="col-timescale" checked>
+                    <label for="col-timescale">Timescale Description</label>
+                </div>
+                <div class="column-item">
+                    <input type="checkbox" id="col-category">
+                    <label for="col-category">Timescale Category</label>
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button class="modal-btn modal-btn-secondary" onclick="closeExportDialog()">Cancel</button>
+                <button class="modal-btn modal-btn-primary" onclick="exportToCSV()">Export</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const purposeCategories = {
+            'clarify': {
+                name: 'To Clarify What Matters Most',
+                whenToUse: 'Client doesn\'t know what they want, has competing priorities, or pursues externally-driven goals',
+                coreProblem: '"I don\'t know what I want" / "Everything feels important" / "Am I living someone else\'s life?"',
+                purpose: 'Client develops clear direction with prioritized goals and values that serve as their decision-making compass. They feel aligned, focused, and energized by a compelling vision of what they\'re working toward.',
+                color: '#e3f2fd',
+                badge: '#1976d2'
+            },
+            'surface': {
+                name: 'To Surface Hidden Patterns & Root Causes',
+                whenToUse: 'Client feels stuck but doesn\'t understand why, or you need to uncover unconscious patterns driving behavior',
+                coreProblem: '"I don\'t know what\'s really going on" / "Why do I keep doing this?" / "I\'m stuck in the same cycle"',
+                purpose: 'Client gains deep insight into recurring patterns, root causes, and unconscious drivers of their behavior. They understand WHY they get stuck and can make different choices based on this awareness.',
+                color: '#f3e5f5',
+                badge: '#7b1fa2'
+            },
+            'identity': {
+                name: 'To Build Self-Awareness & Authentic Identity',
+                whenToUse: 'Client needs to understand their strengths, values, personality, or who they really are beneath external expectations',
+                coreProblem: '"I don\'t really know myself" / "What are my strengths?" / "Am I being authentic?"',
+                purpose: 'Client develops profound self-knowledge of their natural talents, core values, personality patterns, and authentic identity. They can confidently leverage their strengths and make choices aligned with who they truly are.',
+                color: '#fff3e0',
+                badge: '#f57c00'
+            },
+            'shift': {
+                name: 'To Shift Internal Barriers & Resistance',
+                whenToUse: 'Client knows what to do but internal resistance, fear, limiting beliefs, emotions, or relationship patterns prevent action',
+                coreProblem: '"I know what I should do but something stops me" / "I\'m my own worst enemy" / "My relationships drain me" / "I feel stuck emotionally"',
+                purpose: 'Client transforms limiting beliefs, processes difficult emotions, and develops healthier relationship patterns. They access greater freedom, resilience, and agency to pursue their goals without internal sabotage.',
+                color: '#fce4ec',
+                badge: '#c2185b'
+            },
+            'action': {
+                name: 'To Enable Consistent Action & Follow-Through',
+                whenToUse: 'Client has clarity and motivation but struggles with execution, consistency, or turning insights into sustainable behavior',
+                coreProblem: '"I start but don\'t finish" / "I lose momentum" / "I need better systems"',
+                purpose: 'Client develops reliable systems and structures that support consistent action toward their goals. They build sustainable habits, maintain momentum through challenges, and successfully bridge the gap between intention and execution.',
+                color: '#e8f5e8',
+                badge: '#388e3c'
+            }
+        };
+
+        const interventions = [
+            // TO CLARIFY WHAT MATTERS MOST
+            {
+                name: "Wheel of Life",
+                purpose: "Assess overall life balance and satisfaction across key life areas. Helps clients identify which life domains are fulfilling and which need improvement. Outcome: clarity on priorities and areas for goal-setting.",
+                method: "Client rates their satisfaction in each life area (e.g. health, career, relationships, etc.) on a circular chart. The resulting wheel highlights gaps – a visual snapshot of life balance. Coach and client discuss low-scoring areas and brainstorm goals to improve them.",
+                timescale: "In-session (quick assessment, ~15–30 min). Often used in an early session; can be repeated later to measure progress.",
+                category: "in-session",
+                purposeCategory: "clarify"
+            },
+            {
+                name: "SMART Goals Framework",
+                purpose: "Ensure goals are clear and attainable. This addresses vague or unrealistic goals by refining them. Outcome: well-defined goals that are Specific, Measurable, Achievable, Relevant, and Time-bound, increasing the likelihood of success.",
+                method: "The coach and client take a stated goal and evaluate/refine it against SMART criteria. For example, get healthy becomes Exercise 30 minutes, 5 days a week (Specific/Measurable), for the next 3 months (Time-bound), via doable home workouts (Achievable), to improve energy for my kids (Relevant). The coach helps break big goals into yearly, monthly, weekly sub-goals and set up tracking and celebration of milestones.",
+                timescale: "In-session (goal refinement, ~10–20 min per goal) with follow-up each session. The client works on goals between sessions; progress is reviewed regularly.",
+                category: "ongoing",
+                purposeCategory: "clarify"
+            },
+            {
+                name: "Why Ladder (Deep Goal Exploration)",
+                purpose: "Determine if a goal is truly meaningful and aligned with the client core desires. Addresses goals that might be externally driven or superficial. Outcome: either strengthened motivation (if the goal connects to deep values) or redirection to a more authentic goal.",
+                method: "The client lists their top 3 goals, then answers a series of What do I hope to gain from this? or Why is this important? questions for each. By asking why multiple times in succession (drilling down 3–5 levels), the exercise uncovers the fundamental emotional payoff or value (e.g. losing weight → feel proud of my strength → improve overall self-esteem → be confident and pursue other goals). This reveals whether the goal will truly bring the desired feeling, helping prioritize or redefine goals.",
+                timescale: "In-session (discussion or worksheet, ~10 min per goal). Can be given as a writing exercise for homework, with the coach reviewing the insights next session.",
+                category: "in-session",
+                purposeCategory: "clarify"
+            },
+            {
+                name: "Ikigai Framework",
+                purpose: "Help clients who feel aimless or unfulfilled to discover their life purpose or passion. Addresses questions like What should I do with my life/career? Outcome: identification of key themes (passions, talents, values) that point toward a fulfilling direction or north star.",
+                method: "The client (often with a worksheet) considers four overlapping areas: what they love, what they are good at, what the world needs, and what they can be paid for. The intersections reveal possible purpose/career directions. This Japanese concept helps clients find their 'reason for being' by identifying where their passions, skills, market needs, and earning potential overlap.",
+                timescale: "Initial in-session introduction (explain Ikigai, ~15 min), then between sessions work (client fills Ikigai diagram over 1-2 weeks). Follow-up session to discuss findings (30+ min).",
+                category: "multi-session",
+                purposeCategory: "clarify",
+                subcategory: "Purpose Discovery"
+            },
+            {
+                name: "What Makes My Heart Sing?",
+                purpose: "Identify activities that put the client in flow or bring them joy and fulfillment. Useful for clients seeking more joy or trying to choose a career/hobby aligned with their passions. Outcome: a list of genuinely fulfilling activities/experiences and insight into how to create more of those moments in life.",
+                method: "The coach prompts the client with a question like Recall times you felt fully alive, present, or in flow – when your heart felt like it was singing. The client lists or describes those peak experiences. Together, they examine what those moments have in common and realize many are simple or accessible (often free or easy to arrange). For example, being in nature, creative writing, helping someone, etc. The coach then helps the client brainstorm ways to incorporate more of these joy-giving activities into their routine or even career. The exercise shifts focus from what should I do to what lights me up, which can guide meaningful changes.",
+                timescale: "In-session (a reflective discussion, ~20 min, sometimes aided by a worksheet or visualizations to recall feelings). Followed by action planning to schedule or prioritize these heart-singing activities (ongoing lifestyle adjustments).",
+                category: "in-session",
+                purposeCategory: "clarify"
+            },
+            {
+                name: "Big Rocks Prioritization",
+                purpose: "Teach effective time management and prioritization of what truly matters, combating the tendency to fill life with trivial tasks first. Outcome: client learns to focus on their big rocks (important priorities) before the minor pebbles and sand of daily demands, leading to better productivity and life balance.",
+                method: "The coach shares the Big Rocks metaphor: If you fill a jar with sand and pebbles first, the big rocks won't fit; but if you start with big rocks, the smaller stuff will fit around them. The client identifies their own big rocks – the crucial goals or values (family time, critical project, health, etc.). Using a visual worksheet or just discussion, they map out how to put those first in their schedule. For instance, scheduling workouts or family dinners (big rocks) before emails or chores (sand). The coach then holds the client accountable to this new way of planning time. This exercise often includes reviewing a current schedule to see where time is wasted on low-value activities, then restructuring it.",
+                timescale: "In-session (metaphor explanation and personal application, ~20 min). Follow-up in later sessions: coach asks how well the client is sticking to prioritizing big rocks and helps adjust as needed. It's an ongoing time-management habit change.",
+                category: "in-session",
+                purposeCategory: "clarify"
+            },
+            {
+                name: "Urgent-Important Matrix (Eisenhower Matrix)",
+                purpose: "Help clients overcome the urgency trap and reduce time wasted on things that feel urgent but aren't important. Improves productivity and stress management by clarifying priorities. Outcome: better time allocation – more focus on important strategic activities, and minimization of distractions and procrastination.",
+                method: "The coach introduces the 4-quadrant matrix: Important & Urgent, Important & Not Urgent, Not Important & Urgent, Not Important & Not Urgent. The client sorts their tasks or typical activities into these categories. Often they realize many urgent tasks (emails, minor requests) are not truly important. The coach then guides them to plan more time for Quadrant II – important but not urgent (like long-term projects, self-care) – and delegate or eliminate Quadrant III/IV tasks (unimportant ones). By becoming aware of how they currently spend time, clients can consciously make changes (e.g. set boundaries on interruptions, schedule deep work). This tool is frequently used in corporate or executive coaching but is equally helpful for personal life management.",
+                timescale: "In-session (mapping tasks into the matrix, ~15–20 min). Between sessions: client implements changes (e.g. time-blocking important tasks, saying no to some requests). Progress and any time management hurdles are reviewed in subsequent sessions.",
+                category: "in-session",
+                purposeCategory: "clarify"
+            },
+            {
+                name: "Goal-Setting Worksheet / Action Plan",
+                purpose: "Translate goals into concrete action steps and track progress. Helps clients who have goals but lack a structured plan. Outcome: a clear roadmap of tasks and deadlines, leading to accountability and steady progress.",
+                method: "The coach either provides a template or works with the client to create a worksheet outlining the goal, success metrics, and step-by-step actions. The plan typically includes target dates and resources needed. By breaking goals into smaller tasks, it fosters focus and allows easier tracking of achievements or adjustments. (Example templates include simple goal planners or project plans.)",
+                timescale: "In-session (developing the plan, ~15 min per goal) and ongoing (client updates progress between sessions; coach reviews in subsequent sessions).",
+                category: "ongoing",
+                purposeCategory: "action"
+            },
+            {
+                name: "Life-Map (Life Timeline) Exercise",
+                purpose: "Gain a helicopter view of the client life story – highlighting significant highs and lows. Useful for finding patterns, unresolved issues, or values emerging from life experiences. Outcome: a big-picture perspective on one life journey, leading to insights about identity, values, limiting beliefs, and defining moments.",
+                method: "The client creates a visual timeline of their life, noting key events and periods (both positive and negative) that feel important to them. This can be drawn as a line graph with peaks and valleys or simply a chronological list. Crucially, the focus is on events meaningful to the client, not just conventional milestones. As they map it, patterns often emerge (e.g. I notice all my career successes coincided with times I felt personally supported or Many of my low points involve that same limiting belief). In the session, the coach and client discuss these events and what they meant to the client. It often uncovers value themes (e.g. independence, creativity) and points out pivot moments or traumas that may still influence the client. This greater self-understanding can guide future coaching work (such as redefining a narrative or healing a past issue).",
+                timescale: "Usually a between-sessions assignment (client spends time to thoughtfully create their life map). Then an in-session review (30–60 min) where coach and client walk through the timeline together. It can be done early in coaching to get to know the client deeply, or at a mid-point for reflection.",
+                category: "homework",
+                purposeCategory: "surface"
+            },
+
+            // TO SURFACE HIDDEN PATTERNS & ROOT CAUSES
+            {
+                name: "5 Whys Root-Cause Questioning",
+                purpose: "Uncover the deeper motivation or root cause behind a goal or problem. Helps clarify what truly drives the client desires or challenges. Outcome: insight into core needs or issues (often different from initial surface answer).",
+                method: "Coach asks Why repeatedly (typically five times) whenever the client states a goal or problem. Each answer is probed with another why, drilling down to fundamental reasons. This simple Q&A method often reveals the underlying values or needs (e.g. wanting wealth might really be about love or security).",
+                timescale: "In-session (short dialogue exercise, ~5–10 min). Can also be assigned as reflection questions for homework.",
+                category: "in-session",
+                purposeCategory: "surface"
+            },
+
+            // TO BUILD SELF-AWARENESS & AUTHENTIC IDENTITY
+            {
+                name: "CliftonStrengths Assessment",
+                purpose: "Identify the client's natural talents and positive qualities through Gallup's research-based assessment. Builds confidence and helps leverage strengths to achieve goals. Outcome: understanding of top 5 talent themes and strategies to apply them for growth.",
+                method: "The client completes the CliftonStrengths online assessment which identifies their top talent themes from 34 possibilities (like Achiever, Strategic, Empathy). In session, coach reviews the personalized report with client, discussing how these strengths show up in their life and brainstorming ways to leverage them more intentionally in pursuing goals.",
+                timescale: "Between sessions (online assessment ~30-45 min). Then in-session (debriefing results, ~30 min). Coach may assign ongoing reflection on using strengths daily.",
+                category: "multi-session",
+                purposeCategory: "identity",
+                subcategory: "Strengths Assessments"
+            },
+            {
+                name: "VIA Character Strengths Survey",
+                purpose: "Identify client's core character strengths based on positive psychology research. Helps build self-awareness of innate positive qualities. Outcome: understanding of top character strengths and how to apply them for wellbeing and success.",
+                method: "Client takes the free VIA Survey online, which ranks 24 character strengths (like creativity, perseverance, gratitude) based on positive psychology research. Coach and client explore how to use signature strengths more deliberately in work and life challenges.",
+                timescale: "Between sessions (online survey ~15-20 min). Then in-session review (~20-30 min) to discuss application strategies.",
+                category: "multi-session",
+                purposeCategory: "identity",
+                subcategory: "Strengths Assessments"
+            },
+            {
+                name: "Values List Exercise",
+                purpose: "Help clients identify their core values through systematic selection from a comprehensive list. Addresses indecision or lack of direction by anchoring choices in personal values. Outcome: clarity on top 5-10 values that serve as decision-making compass.",
+                method: "Client reviews a comprehensive list of values (e.g., integrity, family, creativity, adventure, security) and selects their most important ones through elimination rounds. Starting with 20-30 that resonate, they narrow down to top 10, then top 5. Coach explores why these values matter and how well current life aligns with them.",
+                timescale: "In-session (20-30 min for selection and discussion). Values are referenced throughout coaching to guide decisions.",
+                category: "in-session",
+                purposeCategory: "clarify",
+                subcategory: "Values Clarification"
+            },
+            {
+                name: "Values Card Sort",
+                purpose: "Identify core values through interactive physical sorting process. More engaging than list selection for kinesthetic learners. Outcome: visceral understanding of value priorities through hands-on sorting.",
+                method: "Using physical cards with one value per card, client sorts into piles: Very Important, Important, Not Important. Then further refines Very Important pile to identify top 5-7 core values. The physical manipulation and visual sorting often leads to insights about value conflicts or surprises about what truly matters.",
+                timescale: "In-session (20-30 min). The tactile nature often leads to deeper discussion about value trade-offs.",
+                category: "in-session",
+                purposeCategory: "clarify",
+                subcategory: "Values Clarification"
+            },
+            {
+                name: "MBTI (Myers-Briggs Type Indicator)",
+                purpose: "Understand personality preferences across four dimensions: extraversion/introversion, sensing/intuition, thinking/feeling, judging/perceiving. Outcome: awareness of cognitive preferences that affect communication, decision-making, and work style.",
+                method: "Client completes MBTI assessment to identify their 4-letter type (e.g., INTJ, ESFP). Coach helps interpret how these preferences show up in work and relationships, discussing strengths and blind spots of their type. Insights guide personalized strategies for growth and interaction.",
+                timescale: "Between sessions (assessment ~20-30 min). In-session debrief (~30 min) to explore type dynamics and applications.",
+                category: "multi-session",
+                purposeCategory: "identity",
+                subcategory: "Personality Assessments"
+            },
+            {
+                name: "DiSC Assessment",
+                purpose: "Identify dominant behavioral style in work settings: Dominance, Influence, Steadiness, or Conscientiousness. Outcome: improved workplace communication and team dynamics through understanding behavioral tendencies.",
+                method: "Client takes DiSC assessment to identify primary and secondary styles. Coach explores how this affects their leadership, communication, and stress responses. Practical strategies developed for working with different DiSC styles and adapting approach based on others' preferences.",
+                timescale: "Between sessions (assessment ~15-20 min). In-session application (~30 min) focusing on workplace scenarios.",
+                category: "multi-session",
+                purposeCategory: "identity",
+                subcategory: "Personality Assessments"
+            },
+            {
+                name: "Enneagram Assessment",
+                purpose: "Discover core motivations, fears, and unconscious patterns through 9-type system. Goes deeper than behavior to underlying drives. Outcome: profound self-awareness of automatic patterns and paths for growth.",
+                method: "Client identifies their Enneagram type through assessment or guided exploration. Coach helps understand core motivations, stress patterns, and growth directions for their type. Particularly powerful for recognizing unconscious patterns and defense mechanisms.",
+                timescale: "Assessment or discovery process (30-45 min). Multiple sessions often needed to fully explore type dynamics and integration.",
+                category: "multi-session",
+                purposeCategory: "identity",
+                subcategory: "Personality Assessments"
+            },
+            {
+                name: "Emotional Intelligence Assessment",
+                purpose: "Evaluate and develop the client ability to recognize and manage emotions (theirs and others). Addresses issues in leadership, relationships, or self-regulation. Outcome: targeted growth in emotional awareness, empathy, and coping skills.",
+                method: "The coach may use tools like the EQ-i 2.0 or Mayer-Salovey-Caruso (MSCEIT), or simpler quizzes, to measure aspects of emotional intelligence (self-awareness, self-regulation, social awareness, relationship management). After the client completes an assessment, the results highlight strengths and weaknesses (e.g. maybe high empathy but low impulse control). The coach then works with the client on exercises to improve weaker areas – for example, mindfulness for self-regulation or active listening practice for empathy. Progress can be tracked by re-assessment or observed behavior changes.",
+                timescale: "Between sessions (assessment, ~30–45 min). In-session (feedback and development planning, ~30 min). Follow-up over multiple sessions to build emotional skills, possibly with a re-test after some months.",
+                category: "multi-session",
+                purposeCategory: "identity"
+            },
+            {
+                name: "Energy Drainers vs. Energizers (Energy Assessment)",
+                purpose: "Identify factors in the client life that deplete energy versus those that boost energy. Addresses burnout or stagnation by pinpointing changes for greater vitality. Outcome: clarity on what to eliminate, change, or increase to improve energy and motivation.",
+                method: "Client makes two lists: one of all people, activities, or situations that drain their energy, and one of those that give them energy. With the coach, they analyze patterns and decide what to cut back, delegate, or handle differently (energy zappers), and what positive elements to do more of.",
+                timescale: "In-session (as a brainstorming list, ~15 min) and as homework (client can log energy highs/lows between sessions).",
+                category: "in-session",
+                purposeCategory: "identity"
+            },
+            {
+                name: "Secret Recipe Reflection",
+                purpose: "Increase personal responsibility and empowerment for one current life situation. Useful when a client feels stuck or life is on autopilot. Outcome: realization that their decisions created their present, and that new decisions can change the future.",
+                method: "The coach turns the client question How did I get here? back to them. The client is asked to recount the recipe of choices, habits, and circumstances that led to their current life. By describing this series of decisions, clients recognize their agency in creating their reality. This perspective shift often inspires hope that by altering ingredients (choices), they can cook a different outcome.",
+                timescale: "In-session (discussion exercise, ~15 min). May also be a journaling assignment for deeper self-reflection.",
+                category: "in-session",
+                purposeCategory: "identity"
+            },
+            {
+                name: "Reflective Journaling",
+                purpose: "Encourage self-reflection, learning, and emotional processing between sessions. Journaling helps clients gain insights on their thoughts and behaviors over time. Outcome: greater self-awareness, clarity in thinking, and identification of patterns or solutions (sometimes writing it out reveals answers).",
+                method: "The coach prompts the client to keep a journal – either free-form or using prompts. For example, a client might be asked to journal nightly about successes, challenges, or feelings that arose. Writing engages a different cognitive process; it slows down thoughts and often uncovers deeper meaning (one definition: stepping back from experience to ponder its meaning). Some coaches suggest specific formats like bullet journals, or even drawing/doodling as part of reflection (which can tap into creativity and rewire thinking patterns). In sessions, the client may share excerpts or insights from their journal. This tool is flexible – it can be tailored to almost any coaching focus (leadership lessons, personal growth reflections, etc.).",
+                timescale: "Ongoing daily/weekly practice (time investment set by client, e.g. 10 minutes a day or a page per week). Occasionally reviewed in-session (coach might spend 10 min discussing what the client learned from journaling).",
+                category: "ongoing",
+                purposeCategory: "surface"
+            },
+            {
+                name: "360-Degree Feedback",
+                purpose: "Give the client a broad perspective on how they are perceived by others – often used for leadership or personal development. Outcome: valuable insights into blind spots and strengths from multiple viewpoints, which the client can use to improve behavior or skills.",
+                method: "The coach facilitates a mini 360 feedback process. In professional settings, this might involve surveys sent to coworkers or team members rating the client on key behaviors (with permission and anonymity). In personal coaching, it could be as informal as asking the client to gather feedback from a few trusted individuals about their performance or habits (e.g. What do you see as my biggest strength and area to improve?). Formal tools exist (some assessments invite peers to respond, generating a report). The coach and client then review the feedback to identify common themes. For example, multiple people might note the client great creativity but poor time management. With these insights, the client and coach create a development plan to leverage strengths and address weaknesses. The coach also helps the client process any surprising or critical feedback constructively (managing emotional reactions).",
+                timescale: "Multi-step: setup between sessions (collecting feedback can take 1–2 weeks). Then an in-session debrief (30–60 min) to discuss and reflect on the feedback. Followed by longer-term coaching focus on areas highlighted. Optionally, a repeat 360 at the end of coaching measures improvement.",
+                category: "multi-session",
+                purposeCategory: "identity"
+            },
+            {
+                name: "Limiting Beliefs Identification (Saboteurs Assessment)",
+                purpose: "Bring to light the client internal saboteurs – habitual negative thoughts or beliefs that undermine their success. Outcome: increased awareness of one self-defeating mental patterns (e.g. inner critic, pleaser, hyper-achiever) and a starting point to change them.",
+                method: "The client might take a specific quiz such as the Positive Intelligence Saboteurs Assessment, which identifies their dominant mental saboteurs (like Judge, Victim, Procrastinator, etc.). Alternatively, the coach asks probing questions to uncover recurring negative self-talk or fixed beliefs (I'm not good enough because…). Once identified, the coach names these patterns (sometimes even giving the inner critic a persona or nickname) and discusses how they impact the client. Simply recognizing these automatic thoughts is the first step toward challenging and replacing them.",
+                timescale: "Between sessions (if using an online quiz, ~5–10 min). In-session (discussion and awareness-building, ~20 min). The coach will revisit these beliefs throughout coaching to monitor and reduce their influence.",
+                category: "multi-session",
+                purposeCategory: "shift"
+            },
+            {
+                name: "Self-Authoring Program",
+                purpose: "Guide clients through an extensive structured self-reflection on past, present, and future. It addresses lack of direction or unresolved issues by writing one narrative. Outcome: deep insight into personal history and identity, clarity of future vision, and a sense of resolution and purpose.",
+                method: "The Self-Authoring Suite (developed by psychologists, e.g. Dr. Jordan Peterson) is a set of writing exercises divided into modules: Past Authoring (writing autobiography, especially significant life events and traumas), Present Authoring (analyzing current virtues, faults, and life situation), and Future Authoring (creating detailed goals and visions for the future). Coaches recommend this to clients ready for intensive work. The client writes extensively (it can take days or weeks to complete all modules). The coach then discusses the client writings over one or multiple sessions, helping to glean insights and action steps. This process helps clients make sense of their life story, let go of past baggage, and design a purposeful future.",
+                timescale: "Long-term homework (the entire program may span days or weeks of writing). Multi-session usage: some coaches devote parts of several sessions to debrief each portion (past, present, future). It's optional and client-driven due to the significant time commitment.",
+                category: "multi-session",
+                purposeCategory: "identity"
+            },
+            {
+                name: "Personal SWOT Analysis",
+                purpose: "Apply a classic strategic tool (Strengths, Weaknesses, Opportunities, Threats) to the individual for self-improvement and planning. Outcome: a balanced inventory of the client internal strengths & weaknesses and external opportunities & threats, used to inform career or life decisions.",
+                method: "The coach explains SWOT and together with the client draws a 2x2 grid: Strengths (internal positive attributes), Weaknesses (internal limitations), Opportunities (external circumstances the client could exploit for gain), Threats (external challenges or risks). The client fills in each quadrant through guided questions (e.g., What are you naturally good at?, What skills are you lacking or habits holding you back?, What trends or support could you use?, What external obstacles do you face?). This holistic view often boosts confidence (seeing one strengths and opportunities) while also pinpointing areas for growth or contingency plans. The coach then helps brainstorm how to maximize strengths/opportunities and mitigate weaknesses/threats.",
+                timescale: "In-session (filling out and discussing the SWOT, ~30 min). Can also be a worksheet homework for the client to draft, then refined with the coach. Often used at a midpoint in coaching or for career coaching engagements.",
+                category: "in-session",
+                purposeCategory: "identity"
+            },
+
+            // TO SHIFT INTERNAL BARRIERS & RESISTANCE
+            {
+                name: "Cognitive Reframing (Challenging Beliefs)",
+                purpose: "Replace distorted or unhelpful beliefs with more positive, realistic ones. Helpful for clients who experience anxiety, low confidence or stuck thinking due to self-defeating thoughts. Outcome: reduced negative emotions (like anxiety) and new empowering beliefs that support action.",
+                method: "The coach uses a simplified ABC model from cognitive-behavioral theory: A = activating event, B = belief about the event, C = consequence (feeling/behavior). The client identifies a specific situation (A) and the belief (B) it triggered (e.g. I failed at X, so I'm a failure). The coach then helps them dispute that belief: examining evidence, exploring alternative interpretations, and finding a more rational or constructive belief. For example, One setback doesn't define me; I've succeeded in other areas. By adjusting the belief, the emotional consequence (C) shifts from, say, anxiety to determination. Repeated practice of this thought-challenging builds resilience and a growth mindset.",
+                timescale: "In-session (coaching conversation or worksheet, ~15–20 min per belief). The client may be given thought journal homework to practice reframing beliefs in real-life situations, with reviews in later sessions.",
+                category: "in-session",
+                purposeCategory: "shift"
+            },
+            {
+                name: "Miracle Question Envisioning",
+                purpose: "Shift the client mindset from problem-focused to solution-focused by imagining their life free of the current problem. Instills hope and clarifies goals. Outcome: the client identifies what they truly want to be different and gains optimism and motivation to pursue that vision.",
+                method: "The coach poses the Miracle Question (from solution-focused therapy): Suppose tonight, while you sleep, a miracle happens and your problem is solved. When you wake up, what would be different? How would you know the miracle occurred?. The client then describes in detail that ideal scenario – how they feel, what they notice, what is happening around them. This exercise does several things: it shifts their focus to future possibilities rather than present obstacles; it encourages creative thinking and positive emotion (engaging imagination and hope); and it often reveals concrete goals (the differences they describe point to what they really want, e.g. I wake up energized suggests a goal around health or stress). The coach listens for these clues and helps the client turn them into actionable steps. The process also increases the client self-awareness about their true priorities and can boost motivation by making the desired future feel attainable.",
+                timescale: "In-session (a guided visualization/conversation, ~10–15 min). Its insights feed directly into goal-setting and action planning in that session or the next. The client may revisit this envisioned miracle periodically as inspiration.",
+                category: "in-session",
+                purposeCategory: "shift"
+            },
+            {
+                name: "Mindful Breathing Meditation",
+                purpose: "Help clients reduce stress and re-center through focused breathing awareness. Quickly interrupts anxiety spirals and overwhelm. Outcome: immediate calming and return to present-moment awareness.",
+                method: "Coach guides client to pause and focus solely on their breath for 2-5 minutes. Instructions typically include: notice the breath without changing it, feel the sensations of air entering and leaving, gently return attention when mind wanders. This simple practice activates the parasympathetic nervous system and breaks stress cycles.",
+                timescale: "In-session (2-5 minute practices as needed). Can be taught as self-regulation tool for daily use.",
+                category: "in-session",
+                purposeCategory: "shift",
+                subcategory: "Mindfulness Practices"
+            },
+            {
+                name: "Body Scan Meditation",
+                purpose: "Develop body awareness and release physical tension through systematic attention. Helps clients who carry stress somatically. Outcome: reduced physical tension and increased mind-body connection.",
+                method: "Client is guided to systematically focus attention on each body part from toes to head, noticing sensations without judgment. Often reveals where stress is held physically. The practice of 'breathing into' tense areas and consciously relaxing them builds somatic awareness.",
+                timescale: "In-session introduction (10-20 min). Often assigned as homework with audio guidance.",
+                category: "ongoing",
+                purposeCategory: "shift",
+                subcategory: "Mindfulness Practices"
+            },
+            {
+                name: "Visualization & Guided Imagery",
+                purpose: "Enhance motivation, confidence, and problem-solving by mentally practicing success or seeing a challenge from a new angle. Outcome: increased clarity on goals and belief in one ability to achieve them, often with reduced stress or fear.",
+                method: "The coach guides the client through a vivid imagination exercise. There are two common approaches: Future Visualizations, where clients imagine a desired outcome as if it's happening (e.g. giving a successful speech, receiving an award, living their ideal day), and Problem/Resilience Visualizations, where clients revisit a past challenge or envision a current problem resolved, focusing on positive outcomes and personal strengths used. The coach may use a calming narrative to engage the client senses (see the audience clapping, feel the confidence in your voice…). This leverages the brain creativity and can boost optimism and identify strategies (the client might discover lessons learned or untapped strengths during the imagery).",
+                timescale: "In-session (short guided meditation-style exercise, typically 5–15 min). Sometimes assigned as self-visualization homework (client listens to a recorded script or imagines their goal daily).",
+                category: "in-session",
+                purposeCategory: "shift"
+            },
+            {
+                name: "Positive Affirmations",
+                purpose: "Build self-esteem, optimism, and a resilient mindset by countering negative self-talk. Particularly helps clients with low confidence or pervasive self-doubt. Outcome: gradually replaces limiting beliefs with empowering ones, fostering confidence and goal-oriented thinking.",
+                method: "The coach helps the client craft a set of positive affirmations – short, present-tense, first-person statements about themselves or their goals (e.g. I am capable and creative or I deserve success and I work towards it every day). These are phrased as if the outcome is already true and focus on the positive (avoiding negatives). The client is instructed to repeat these affirmations regularly (daily, often out loud or in writing). The repetition and emotional visualization behind the words help rewire thought patterns, replacing habitual negative thoughts with supportive ones. Over time, this boosts the client confidence and motivation. (Coaches may adjust affirmations if they feel too untrue at first, scaling to believable positive statements.)",
+                timescale: "Daily practice (e.g., reciting each morning or before challenging tasks). Discussed in-session initially (creating the affirmations, 10–15 min) and revisited to gauge impact. Long-term use recommended for cumulative effect.",
+                category: "ongoing",
+                purposeCategory: "shift"
+            },
+            {
+                name: "Unsent Letter Exercise",
+                purpose: "Facilitate emotional release and clarity in relationships by expressing thoughts/feelings in writing, without the pressure of a real conversation. Ideal for clients holding onto anger, grief, or unspoken words toward someone. Outcome: relief from emotional burden, improved understanding of one feelings, and readiness (if appropriate) to address the relationship more calmly.",
+                method: "The client writes a raw, honest letter to a specific person (e.g. a parent, ex-partner, boss) or even a part of themselves – but does not send it. The coach encourages them to pour out everything: frustrations, gratitude, apologies, etc., with no filter. This private writing serves as a cathartic release. In the next session, the client may share parts of the letter or simply discuss the process and insights gained. Often, writing the letter helps the client identify what truly bothers them or what they truly want, beyond initial anger. It gets the heaviness out of the way. After this, the coach and client can strategize how to move forward – whether that's having a constructive conversation with the person (now that emotions are settled) or finding closure privately.",
+                timescale: "Homework (writing the letter, usually 30–60 min of personal time). In-session follow-up (client can read it aloud or summarize, ~15+ min, but they are not forced to share if uncomfortable). The exercise can be repeated for different people or situations as needed.",
+                category: "homework",
+                purposeCategory: "shift"
+            },
+            {
+                name: "Empty Chair Technique (Role-Play Perspectives)",
+                purpose: "Help clients gain insight, resolve inner conflicts, or process intense emotions by speaking to an imagined person or part of themselves. Borrowed from therapy but used in coaching for perspective shifting and closure. Outcome: increased self-awareness, empathy (even for oneself), and emotional resolution – often leading to decisions or peace regarding a situation.",
+                method: "The coach sets up an empty chair facing the client. The client is invited to imagine a person sitting there – it could be someone they need to have a difficult conversation with, or it could represent a part of themselves (like their fearful self, or their inner critic). The coach then facilitates a role-play: the client speaks to the person in the chair, expressing thoughts or feelings they've been holding back. The coach might even have the client switch chairs – to respond as the other person or as their own wiser self – creating a dialogue. This technique helps externalize and process unfinished business. For example, a client might confront an absent parent in the empty chair, finally saying things they needed to say; then switch and attempt to speak from the parent perspective (building empathy or closure). By the end, clients often feel a release of emotion and a better understanding of themselves or the other party. Coaches use it carefully, ensuring the client is ready and debriefing thoroughly afterward.",
+                timescale: "In-session (can be emotionally intense; duration varies, ~15–30 min). Not usually assigned as homework (works best live with coach guidance). The insights gained are then used in coaching (e.g. deciding how to move forward after resolving an inner dialogue).",
+                category: "in-session",
+                purposeCategory: "shift"
+            },
+            {
+                name: "Circles of Influence (Control vs. Concern)",
+                purpose: "Reduce stress and feelings of helplessness by distinguishing what the client can control, what they can only influence, and what is outside their control. Outcome: acceptance of uncontrollables and focus on actionable areas, leading to more effective effort and peace of mind.",
+                method: "Coach draws or uses three concentric circles: inner circle = client direct control, middle = indirect influence, outer = no control. The client takes a specific worry or situation and lists aspects into the appropriate circles. This visualization (akin to the Serenity Prayer) helps them let go of the rest outside their control and concentrate energy on the influenceable parts (e.g. their own responses, choices).",
+                timescale: "In-session (visual mapping exercise, ~10 min). Can be reused whenever client feels up against a wall or overwhelmed by uncontrollable events.",
+                category: "in-session",
+                purposeCategory: "shift"
+            },
+            {
+                name: "I Statements Communication",
+                purpose: "Improve communication and conflict resolution skills by reducing defensiveness. Helps clients express feelings/needs without blame, leading to healthier conversations. Outcome: better relationships and assertive communication.",
+                method: "Coach teaches the client to reframe complaints into first-person statements. Format: When you do X, I feel Y, and it would work better if Z. The client practices phrasing issues this way (often via role-play with the coach) to take ownership of feelings and invite solutions, rather than accusing (avoiding you statements).",
+                timescale: "In-session (practice via role-play, ~10–15 min). Client then applies in real life conversations ongoing.",
+                category: "in-session",
+                purposeCategory: "shift"
+            },
+            {
+                name: "Gratitude Journal",
+                purpose: "Increase positive emotions, present-moment awareness, and overall happiness by regularly focusing on what's going well. Especially useful for clients who are anxious, negative, or overly future-oriented. Outcome: improved mood, optimism, and resilience through a shift in attention to the positive.",
+                method: "The client keeps a dedicated gratitude journal, writing down a few things they are grateful for each day (often 3–5 items). This practice has proven effects in positive psychology – it trains the brain to notice good events and blessings, counteracting the tendency to fixate on problems. Coaches might instruct clients to be specific (e.g. the warm cup of coffee this morning or my colleague helped me with a task). Over time, this simple exercise boosts contentment and can reduce stress. It's particularly transformative for those who struggle to stay in the present; it anchors them by appreciating life now instead of constantly chasing future outcomes.",
+                timescale: "Daily practice (just 5 minutes each evening or morning). The coach will often check in on their gratitude practice in sessions (briefly), and encourage maintaining it long-term for cumulative benefits.",
+                category: "ongoing",
+                purposeCategory: "shift"
+            },
+
+            // TO ENABLE AND SUSTAIN ACTION
+            {
+                name: "Action Brainstorming – Stop/Start/Continue",
+                purpose: "Increase goal-supportive behaviors and eliminate sabotaging ones. Useful when clients need to change habits or routines to reach a goal. Outcome: a tailored behavior modification plan – knowing what to stop, reduce, continue, increase, and start doing.",
+                method: "Client first identifies a specific goal to focus on. Then, using a five-column tool, they list behaviors to: Stop Doing (harmful habits to eliminate), Do Less of, Keep Doing (what's working), Do More of, and Start Doing (new helpful behaviors). This structured brainstorm clarifies which daily actions align or conflict with the goal. The coach then helps the client create an implementation plan for these behavior changes.",
+                timescale: "In-session (worksheet can be done in 15–30 min). The resulting list informs the client homework – they practice stopping/starting specific behaviors between sessions, with progress reviewed later.",
+                category: "in-session",
+                purposeCategory: "action"
+            },
+            {
+                name: "Accountability System",
+                purpose: "Ensure the client follows through on commitments by establishing external accountability. This addresses procrastination or difficulty with self-discipline. Outcome: higher rates of goal completion and habit formation, as the client feels supported and on the hook to report progress.",
+                method: "The coach and client design a system to hold the client accountable. Common methods: Accountability partner (the coach themselves, or pairing the client with a buddy). For instance, the client might agree to email the coach updates, or the coach might use a shared tracking tool. Some coaches set up accountability texts or interim check-in calls. Another method is a habit tracker or app where the coach can see the client checkmarks for daily habits. The key is setting specific targets (e.g. write 500 words every weekday) and a way to report or review them regularly. Knowing that someone will check (and celebrate or inquire if it's not done) boosts the client commitment. Coaches also help clients strategize rewards or consequences to strengthen accountability.",
+                timescale: "Ongoing (daily or weekly check-ins). Often introduced early on: each session ends with clear action steps which will be reviewed next session. In between, the client might send a quick update or use a collaborative tool. The timescale is throughout the coaching engagement – accountability is a continuous structure rather than a one-time exercise.",
+                category: "ongoing",
+                purposeCategory: "action"
+            },
+            {
+                name: "Vision Board Exercise",
+                purpose: "Inspire and focus the client on long-term visions by creating a tangible representation of their goals and dreams. Outcome: heightened motivation and clarity, as the client can literally see what they are working toward.",
+                method: "The client assembles a vision board – a collage of images, words, and symbols that represent their desired future. This can be done physically (poster board with cut-out pictures and quotes) or digitally. The process itself forces the client to clarify what they want in areas like career, relationships, health, etc. Coaches often discuss each chosen image to draw out why it resonates. The finished board serves as a daily visual reminder, leveraging visualization and the law of attraction principle: by focusing on positive outcomes, clients stay motivated and aware of opportunities. It's a creative, emotional exercise that taps into intuition and desire.",
+                timescale: "Often an at-home project (clients might spend several hours gathering materials and making the board). Coaches introduce the idea in a session (15 min) and debrief the completed board in a later session (30 min) to discuss insights. The board is then an ongoing inspiration tool for the client.",
+                category: "homework",
+                purposeCategory: "clarify"
+            },
+
+            // ADDITIONAL ACTION TOOLS
+            {
+                name: "Habit Trackers",
+                purpose: "Create visual accountability and momentum for developing new positive habits or breaking negative ones. Addresses inconsistency in behavior change by making progress visible and rewarding. Outcome: increased consistency in desired behaviors through visual feedback and streak motivation.",
+                method: "Client uses a simple grid, app, or chart to track daily completion of specific habits (e.g., exercise, meditation, reading). Each day they check off or mark whether they completed the habit. The visual representation creates a chain of success that motivates continuation. Coach reviews the tracker periodically to celebrate wins, troubleshoot obstacles, and adjust goals. The key is starting small and focusing on consistency over perfection.",
+                timescale: "Ongoing daily tracking with weekly or bi-weekly coach check-ins. Initial setup in-session (~10 min), then becomes a daily 30-second practice for the client.",
+                category: "ongoing",
+                purposeCategory: "action"
+            },
+
+            // TO IMPROVE RELATIONSHIP DYNAMICS  
+            {
+                name: "Detox Your Relationships (Toxic Relationship Audit)",
+                purpose: "Help clients improve their social environment by evaluating which relationships are supportive vs. draining. Addresses stress or low self-esteem stemming from difficult people. Outcome: client sets boundaries or makes changes to spend more time with people who energize them and less with those who drain them.",
+                method: "The client lists people in their life (friends, family, colleagues) and, with the coach help, assesses who energizes them and who exhausts or undermines them. The exercise may involve a chart or simply marking each name with a + (positive influence) or – (negative influence). The coach then asks, for those that are toxic or draining, what can be done: Can the client limit contact, set firmer boundaries, or change the nature of the interaction? Conversely, how can they engage more with the uplifting people? The word detox underlines that it's about cleansing one social circle for better well-being. The client then creates an action plan, which might include tough choices (like phasing out a one-sided friendship or addressing issues directly) or simply conscious shifts (seeking new supportive communities).",
+                timescale: "In-session (discussion and listing, ~20 min). Follow-up: over subsequent sessions, the coach checks on relationship changes and supports the client through any boundary-setting challenges. This can be an ongoing process as clients build a healthier support network.",
+                category: "in-session",
+                purposeCategory: "shift"
+            },
+            {
+                name: "Energy Audit (Social Version)",
+                purpose: "Specifically analyze how different people and social interactions affect the client's energy levels and emotional state. Helps identify relationship patterns that support or drain wellbeing. Outcome: strategic decisions about social time allocation and relationship boundaries.",
+                method: "Client tracks their energy levels before and after interactions with different people over 1-2 weeks. They note who consistently energizes vs. drains them, what types of conversations or activities create positive vs. negative energy, and patterns around social environments. Coach helps analyze the data to identify energy vampires, energy givers, and neutral relationships. Together they create strategies for maximizing time with energizing people and minimizing or restructuring draining interactions.",
+                timescale: "Between sessions tracking (1-2 weeks of logging), then in-session analysis (~30 min). May include follow-up sessions to implement relationship changes.",
+                category: "multi-session",
+                purposeCategory: "shift"
+            },
+
+            // ADDITIONAL TOOLS FROM EXTENDED LIST
+            {
+                name: "Reflective Debrief of Experience",
+                purpose: "Extract learning and insights from recent events or experiences. Helps clients process what happened and integrate lessons. Outcome: clarity on what worked, what didn't, and what to change moving forward.",
+                method: "Coach guides client through structured reflection: What happened? What went well? What was challenging? What did you learn? What will you do differently next time? This systematic approach ensures no valuable learning is lost and helps build wisdom from experience.",
+                timescale: "In-session (15-30 min discussion). Often used after major events, presentations, difficult conversations, or project completions.",
+                category: "in-session",
+                purposeCategory: "surface",
+                subcategory: "Debrief Methods"
+            },
+            {
+                name: "Implementation Intentions (If-Then Planning)",
+                purpose: "Strengthen follow-through on goals by pre-planning responses to specific situations. Addresses the intention-action gap. Outcome: higher success rate in executing desired behaviors through automated decision-making.",
+                method: "Client creates specific if-then statements: 'If [situation X occurs], then I will [do behavior Y]'. For example: 'If it's 7 AM on a weekday, then I will immediately put on workout clothes.' This pre-commitment removes decision fatigue and creates clear behavioral triggers.",
+                timescale: "In-session creation (20-30 min per goal area), followed by real-world application. Progress reviewed in subsequent sessions.",
+                category: "in-session",
+                purposeCategory: "action"
+            },
+            {
+                name: "ABC Reframing (Cognitive Model)",
+                purpose: "Challenge unhelpful beliefs that create negative emotions or behaviors. Similar to cognitive reframing but uses specific ABC structure. Outcome: more balanced thinking and emotional responses.",
+                method: "Identify A (Activating event), B (Belief about event), C (Consequence - emotion/behavior). Then dispute the belief and create D (new belief) leading to E (new effect). Coach helps client see how beliefs, not events, create their emotional responses.",
+                timescale: "In-session (20 min per belief) plus journaling homework to practice the model independently.",
+                category: "in-session",
+                purposeCategory: "shift"
+            },
+            {
+                name: "Unique Ability Feedback Exercise",
+                purpose: "Gather external perspectives on client's unique strengths and talents. Addresses blind spots in self-perception. Outcome: clearer understanding of natural gifts and how others experience their value.",
+                method: "Client emails 5-10 people asking: 'What do you see as my unique ability - something I do better than most?' Responses often reveal consistent themes the client undervalues. Coach helps synthesize feedback to identify core strengths and potential career/life directions.",
+                timescale: "Multi-step: draft request in session (15 min), gather responses over 1-2 weeks, then in-session synthesis (30+ min).",
+                category: "multi-session",
+                purposeCategory: "identity"
+            },
+            {
+                name: "Voice Dialogue (Parts Work)",
+                purpose: "Integrate conflicting internal voices or sub-personalities. Helps when client feels torn between different parts of themselves. Outcome: greater self-awareness and internal harmony through acknowledging all parts.",
+                method: "Client identifies different 'voices' or parts (e.g., inner critic, playful child, responsible adult). Coach facilitates dialogue where client speaks from each part's perspective, often switching chairs. This creates understanding between parts and reduces internal conflict.",
+                timescale: "In-session (30-45 min). May span multiple sessions for complex internal systems.",
+                category: "in-session",
+                purposeCategory: "shift"
+            },
+            {
+                name: "Body-Based Check-In (Somatic Awareness)",
+                purpose: "Access intuitive wisdom through physical sensations. Helps clients who overthink or disconnect from body signals. Outcome: better decision-making through integrating somatic intelligence.",
+                method: "Coach guides client to tune into body sensations when considering options or reflecting on situations. Questions like 'Where do you feel this in your body?' or 'What does your gut say?' Client learns to interpret tension, expansion, warmth as guidance.",
+                timescale: "In-session practice (5-10 min) integrated into other exercises. Can become ongoing self-awareness tool.",
+                category: "in-session",
+                purposeCategory: "identity",
+                subcategory: "Somatic Practices"
+            },
+            {
+                name: "Time Travel Visualization",
+                purpose: "Connect with future or past self for insight and perspective. Useful for major decisions or understanding patterns. Outcome: wisdom from temporal perspective shift and self-compassion.",
+                method: "Guided visualization where client imagines meeting their future self (e.g., 10 years older) or younger self. They have a dialogue, asking for advice or offering comfort. Often reveals what truly matters and provides self-generated wisdom.",
+                timescale: "In-session guided visualization (10-15 min). May be repeated at different life stages.",
+                category: "in-session",
+                purposeCategory: "shift"
+            },
+            {
+                name: "Obituary/Legacy Writing",
+                purpose: "Clarify life values and long-term direction by considering end-of-life perspective. Addresses lack of purpose or misaligned priorities. Outcome: crystal clear values and renewed commitment to what matters most.",
+                method: "Client writes their ideal obituary or legacy statement - how they want to be remembered, what impact they made, what mattered most. This perspective shift often highlights gaps between current life and desired legacy, motivating change.",
+                timescale: "Homework assignment (30-60 min writing) followed by in-session debrief and action planning.",
+                category: "homework",
+                purposeCategory: "clarify"
+            },
+            {
+                name: "Future Self Letter",
+                purpose: "Emotionally anchor goals and create accountability to future vision. Helps make abstract goals feel real and personal. Outcome: stronger motivation through emotional connection to future self.",
+                method: "Client writes letter either TO their future self (offering encouragement, making commitments) or FROM their future self (sharing wisdom, describing life). The act of writing creates emotional investment in the envisioned future.",
+                timescale: "Homework (20-30 min writing) plus in-session review to extract commitments and insights.",
+                category: "homework",
+                purposeCategory: "clarify"
+            },
+            {
+                name: "Behavioral Experiment Design",
+                purpose: "Test limiting beliefs or assumptions through real-world action. Moves beyond insight to experiential learning. Outcome: evidence-based belief change through direct experience.",
+                method: "Client identifies assumption to test (e.g., 'People will judge me if I speak up'). Coach helps design low-risk experiment to test it (e.g., share one opinion in next meeting). Client gathers data on actual vs. feared outcomes, often disproving the limiting belief.",
+                timescale: "In-session design (15-20 min), homework execution, then analysis in next session.",
+                category: "multi-session",
+                purposeCategory: "shift"
+            },
+            {
+                name: "Core Desired Feelings Method",
+                purpose: "Design life around how you want to feel, not just what you want to achieve. Addresses goals that look good but feel empty. Outcome: more fulfilling goals aligned with desired emotional states.",
+                method: "Client identifies 3-5 core desired feelings (e.g., free, connected, creative). Then reverse-engineers: What activities, environments, relationships generate these feelings? Goals are reformulated to prioritize these feeling states.",
+                timescale: "In-session exploration (30 min) plus ongoing refinement as client tests what generates desired feelings.",
+                category: "in-session",
+                purposeCategory: "clarify"
+            },
+            {
+                name: "Ideal Day Exercise",
+                purpose: "Define aspirational lifestyle in vivid sensory detail. Helps clarify priorities and desired life rhythm. Outcome: clear vision of fulfilling daily life to work toward.",
+                method: "Client writes/describes perfect ordinary day from waking to sleeping - not fantasy but realistic ideal. Include: morning routine, work activities, interactions, evening. Coach examines for themes, values, and practical steps toward this vision.",
+                timescale: "Homework (30 min detailed writing) followed by in-session analysis and planning.",
+                category: "homework",
+                purposeCategory: "clarify"
+            },
+            {
+                name: "Success Timeline (Forward Projection)",
+                purpose: "Envision realistic progress toward a goal over time. Makes long-term goals less overwhelming. Outcome: clear milestones and realistic expectations for goal achievement.",
+                method: "Client sketches timeline from now to goal completion, marking expected milestones, obstacles, and needed resources at each stage. This creates realistic expectation and identifies preparation needs for each phase.",
+                timescale: "In-session mapping (20-30 min). Timeline becomes reference tool throughout coaching.",
+                category: "in-session",
+                purposeCategory: "action"
+            },
+            {
+                name: "Peak Experience Debrief",
+                purpose: "Uncover personal success patterns and values through past triumphs. Builds confidence while revealing success blueprint. Outcome: clarity on personal success factors to replicate.",
+                method: "Client recounts detailed story of peak achievement or fulfillment. Coach identifies embedded strengths, values, support systems, and decision patterns. These elements become template for future success.",
+                timescale: "In-session deep dive (20-30 min per experience). May explore multiple peaks over several sessions.",
+                category: "in-session",
+                purposeCategory: "surface",
+                subcategory: "Debrief Methods"
+            },
+            {
+                name: "Failure Debrief/Reframe",
+                purpose: "Extract learning from setbacks without shame or blame. Transforms failure into growth opportunity. Outcome: resilience and wisdom from processed failures.",
+                method: "Structured analysis: What was the goal? What actually happened? What factors contributed? What was within/outside control? What did you learn? How will you apply this? Coach ensures balanced perspective, not harsh self-judgment.",
+                timescale: "In-session processing (20-30 min). Best done soon after setback while memory is fresh.",
+                category: "in-session",
+                purposeCategory: "surface",
+                subcategory: "Debrief Methods"
+            },
+            {
+                name: "Post-Session Integration Prompt",
+                purpose: "Reinforce session learning and maintain momentum between meetings. Prevents insights from fading. Outcome: deeper integration of coaching work into daily life.",
+                method: "Client answers brief prompt after each session, such as: 'What landed most powerfully today?' or 'What one thing will you experiment with this week?' Responses often reveal what truly resonated.",
+                timescale: "5-10 min homework after each session. Can be written or voice recorded.",
+                category: "homework",
+                purposeCategory: "action"
+            },
+            {
+                name: "Coach's Challenge",
+                purpose: "Interrupt comfort zone patterns through bold action. Creates breakthrough when client is playing small. Outcome: expanded comfort zone and proof of greater capability.",
+                method: "Coach proposes specific challenge slightly beyond client's comfort zone but within their capability. Client agrees to attempt before next session. Challenge is framed as experiment, not test - learning is the goal.",
+                timescale: "Assigned in-session (5 min), executed between sessions, debriefed at next meeting.",
+                category: "homework",
+                purposeCategory: "shift"
+            },
+            {
+                name: "Metaphor Exploration",
+                purpose: "Access subconscious wisdom through symbolic thinking. Reveals patterns not visible through direct analysis. Outcome: fresh insights through creative perspective.",
+                method: "Coach asks client to describe their situation/life/challenge as metaphor: 'If your career were a journey, what kind would it be?' Client explores the metaphor deeply - what type of vehicle, terrain, weather, companions, destination. Rich insights emerge from the imagery.",
+                timescale: "In-session creative exploration (15-30 min). Metaphor may become ongoing reference point.",
+                category: "in-session",
+                purposeCategory: "surface"
+            },
+            {
+                name: "Decision Matrix (Weighted Criteria)",
+                purpose: "Support complex decisions through systematic analysis. Removes emotion and bias from difficult choices. Outcome: clear, defendable decision based on personal priorities.",
+                method: "List options as columns, important criteria as rows. Weight each criterion by importance (1-10). Score each option against criteria. Multiply scores by weights and sum. Highest total indicates best rational choice. Coach ensures criteria reflect true values.",
+                timescale: "In-session creation (30-45 min) or homework with coach review.",
+                category: "in-session",
+                purposeCategory: "clarify"
+            },
+            {
+                name: "WOOP Method",
+                purpose: "Balance optimistic goal-setting with realistic obstacle planning. Prevents naive optimism while maintaining motivation. Outcome: goals with built-in resilience strategies.",
+                method: "Wish: Define the goal. Outcome: Envision best result and how it feels. Obstacle: Identify main internal obstacle. Plan: Create if-then plan for when obstacle arises. This mental contrasting increases success rates.",
+                timescale: "In-session (15-20 min per goal). Can be taught as self-coaching tool.",
+                category: "in-session",
+                purposeCategory: "action"
+            },
+            {
+                name: "Challenge the Shoulds",
+                purpose: "Identify and question internalized expectations that may not serve client. Addresses people-pleasing and living by others' rules. Outcome: more authentic choices based on personal values.",
+                method: "Coach listens for 'should' statements and gently challenges: 'According to whom?' 'What if you didn't?' 'What would you choose instead?' Client examines whether shoulds align with personal values or are inherited/imposed.",
+                timescale: "Ongoing awareness tool used throughout sessions. Can assign should-journaling as homework.",
+                category: "in-session",
+                purposeCategory: "shift"
+            },
+            {
+                name: "Rewrite Your Script",
+                purpose: "Transform limiting life narratives into empowering ones. Addresses victim mindset or fixed self-concept. Outcome: new self-narrative that supports growth and agency.",
+                method: "Identify current story client tells about self/life (often revealed through repeated phrases). Examine story's impact. Consciously craft new narrative highlighting agency, growth, and possibility. Practice telling new story.",
+                timescale: "In-session identification and rewriting (30 min) plus daily practice of new narrative.",
+                category: "in-session",
+                purposeCategory: "shift"
+            },
+            {
+                name: "Future Headlines Exercise",
+                purpose: "Articulate bold vision in concrete, public terms. Makes abstract dreams specific and shareable. Outcome: clear, exciting vision that pulls client forward.",
+                method: "Client writes 3-5 news headlines about their future achievements (3-5 years out). Headlines should be specific, exciting, and slightly scary. This exercise clarifies what public success looks like and commits to visible impact.",
+                timescale: "Homework (10-20 min) followed by session exploration of what each headline requires.",
+                category: "homework",
+                purposeCategory: "clarify"
+            },
+            {
+                name: "One Word Intention",
+                purpose: "Simplify focus through single guiding theme. Cuts through complexity to essential intention. Outcome: clear decision filter and daily reminder of priority.",
+                method: "Client chooses one word to guide decisions for session, month, or year (e.g., 'courage,' 'simplify,' 'connect'). Word is selected through reflection on what's most needed. Becomes touchstone for choices.",
+                timescale: "In-session selection (10-15 min). Word guides ongoing decisions.",
+                category: "in-session",
+                purposeCategory: "clarify"
+            },
+            {
+                name: "Obstacle Mapping",
+                purpose: "Proactively identify challenges before they derail progress. Builds resilience into plans. Outcome: prepared responses to predictable difficulties.",
+                method: "For any goal/plan, brainstorm likely obstacles: internal (fears, habits), external (time, resources), and relational. For each obstacle, design prevention strategy or response plan. This reduces surprise and panic when obstacles arise.",
+                timescale: "In-session planning (15-20 min per major goal). Review and update as needed.",
+                category: "in-session",
+                purposeCategory: "action"
+            },
+            {
+                name: "Boundary Design Exercise",
+                purpose: "Create healthy limits to protect energy and values. Addresses burnout, resentment, or being taken advantage of. Outcome: clear boundaries with language and actions to maintain them.",
+                method: "Identify where client feels resentment, exhaustion, or violation. Define what boundary is needed. Script actual words to use. Practice in session. Plan gradual implementation starting with easier situations.",
+                timescale: "In-session design and practice (30 min) followed by real-world application.",
+                category: "in-session",
+                purposeCategory: "shift"
+            },
+            {
+                name: "Inner Mentor Visualization",
+                purpose: "Access internal wisdom through imagined wise guide. Bypasses overthinking to reach intuitive knowing. Outcome: self-generated guidance and increased self-trust.",
+                method: "Guided visualization to meet wise future self or inner mentor. Client describes mentor's appearance, energy, environment. Asks specific questions and receives guidance. Often surprises client with wisdom they didn't know they had.",
+                timescale: "In-session guided journey (15-20 min). Can revisit when facing major decisions.",
+                category: "in-session",
+                purposeCategory: "shift"
+            },
+            {
+                name: "Courage Ladder",
+                purpose: "Build up to scary action through graduated steps. Makes overwhelming goals achievable. Outcome: completed bold action through systematic courage building.",
+                method: "Identify courageous goal at top of ladder. Break down into progressively smaller, less scary steps. Start with easiest rung. Each success builds confidence for next level. Coach celebrates each rung climbed.",
+                timescale: "In-session design (15 min) with homework execution over multiple weeks.",
+                category: "multi-session",
+                purposeCategory: "action"
+            },
+            {
+                name: "Letter to Fear/Inner Critic",
+                purpose: "Externalize and dialogue with paralyzing inner voices. Reduces their power through direct engagement. Outcome: transformed relationship with fear/criticism.",
+                method: "Write letter from fear/critic's perspective - let it say everything. Then write compassionate but firm response. Often fear reveals useful information when heard fully. Response sets new terms for the relationship.",
+                timescale: "Homework (30-45 min writing) with in-session processing and integration.",
+                category: "homework",
+                purposeCategory: "shift"
+            },
+            {
+                name: "Metta (Loving-Kindness) Meditation",
+                purpose: "Cultivate self-compassion and warm regard for others. Softens harsh self-judgment and relationship conflicts. Outcome: increased emotional resilience and connection.",
+                method: "Guided meditation repeating phrases of well-wishing: 'May I be happy, may I be healthy, may I be safe, may I live with ease.' Extends to loved ones, neutral people, difficult people, all beings. Regular practice rewires brain toward compassion.",
+                timescale: "In-session introduction (10-15 min) with daily practice recommendation.",
+                category: "ongoing",
+                purposeCategory: "shift"
+            },
+            {
+                name: "Action Naming Ritual",
+                purpose: "Transform scary action into memorable story moment. Makes challenge feel significant rather than just difficult. Outcome: increased courage through meaning-making.",
+                method: "Give important/scary action a memorable name (e.g., 'The Big Ask,' 'Operation Phoenix'). Create simple ritual around it - special music, outfit, or preparation. This transforms mundane action into heroic narrative moment.",
+                timescale: "In-session creativity (10 min) applied to upcoming action.",
+                category: "in-session",
+                purposeCategory: "shift"
+            },
+            {
+                name: "Completion Ritual/Celebration Design",
+                purpose: "Honor endings and achievements with intention. Prevents rushing past accomplishments. Outcome: sense of closure, integration of learning, and renewed energy.",
+                method: "Design meaningful way to mark completion: write letter to past self, create symbolic art, host gathering, burn old papers. Ritual should honor the journey, not just outcome. Coach helps design personally meaningful closure.",
+                timescale: "Design in final sessions, execute independently or with coach witness.",
+                category: "in-session",
+                purposeCategory: "shift"
+            },
+            {
+                name: "Purpose Discovery Interview",
+                purpose: "Uncover life purpose through structured exploration of meaningful experiences. Goes deeper than surface goals to find core mission. Outcome: articulated sense of purpose that guides major decisions.",
+                method: "Coach conducts in-depth interview exploring: peak moments of meaning, what client would do if resources were unlimited, what legacy they want to leave, what problems they feel called to solve. Themes across answers reveal purpose.",
+                timescale: "Extended in-session process (45-60 min) possibly over 2-3 sessions. Synthesis and articulation follow.",
+                category: "multi-session",
+                purposeCategory: "clarify"
+            }
+        ];
+
+        let currentData = [...interventions];
+        let currentView = 'categories';
+
+        function switchView(view) {
+            const buttons = document.querySelectorAll('.toggle-btn');
+            const categoryView = document.getElementById('categoryView');
+            const tableView = document.getElementById('tableView');
+
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            if (view === 'categories') {
+                document.querySelector('.toggle-btn[onclick*="categories"]').classList.add('active');
+                categoryView.style.display = 'block';
+                tableView.classList.remove('active');
+                renderCategoryView();
+            } else {
+                document.querySelector('.toggle-btn[onclick*="table"]').classList.add('active');
+                categoryView.style.display = 'none';
+                tableView.classList.add('active');
+                filterData();
+            }
+            currentView = view;
+        }
+
+        function renderCategoryView() {
+            const categoryGrid = document.getElementById('categoryGrid');
+            
+            // Group interventions by purpose category
+            const groupedInterventions = {};
+            interventions.forEach(intervention => {
+                if (!groupedInterventions[intervention.purposeCategory]) {
+                    groupedInterventions[intervention.purposeCategory] = [];
+                }
+                groupedInterventions[intervention.purposeCategory].push(intervention);
+            });
+
+            categoryGrid.innerHTML = Object.keys(purposeCategories).map(categoryKey => {
+                const category = purposeCategories[categoryKey];
+                const tools = groupedInterventions[categoryKey] || [];
+                
+                return `
+                    <div class="category-card" style="background-color: ${category.color};">
+                        <div class="category-header">
+                            <div class="category-title" style="background-color: ${category.badge};">
+                                ${category.name}
+                            </div>
+                        </div>
+                        <div class="category-description">
+                            <strong>When to use:</strong> ${category.whenToUse}
+                        </div>
+                        <div class="category-use-case">
+                            <strong>The core problem:</strong> ${category.coreProblem}
+                        </div>
+                        <div class="category-purpose">
+                            <strong>Purpose / Ideal outcome:</strong> ${category.purpose}
+                        </div>
+                        <div class="category-tools">
+                            <h4>Tools & Interventions (${tools.length})</h4>
+                            <div class="tool-list">
+                                ${tools.map(tool => `<span class="tool-tag" onclick="jumpToIntervention('${tool.name.replace(/'/g, "\\'")}')">${tool.name}</span>`).join('')}
+                            </div>
+                            <div class="tool-count">
+                                ${tools.length} intervention${tools.length !== 1 ? 's' : ''} in this category
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function getTimescaleCategory(timescale) {
+            const text = timescale.toLowerCase();
+            if (text.includes('in-session') && !text.includes('between sessions') && !text.includes('ongoing')) return 'in-session';
+            if (text.includes('homework') || text.includes('between sessions') || text.includes('at-home')) return 'homework';
+            if (text.includes('ongoing') || text.includes('daily practice') || text.includes('continuous')) return 'ongoing';
+            if (text.includes('multi-session') || text.includes('multiple sessions') || text.includes('multi-step')) return 'multi-session';
+            return 'in-session'; // default
+        }
+
+        function getTimescaleBadge(category) {
+            const badges = {
+                'in-session': '<span class="timescale-badge in-session">In-Session</span>',
+                'homework': '<span class="timescale-badge homework">Homework</span>',
+                'ongoing': '<span class="timescale-badge ongoing">Ongoing</span>',
+                'multi-session': '<span class="timescale-badge multi-session">Multi-Session</span>'
+            };
+            return badges[category] || badges['in-session'];
+        }
+
+        function getPurposeBadge(purposeCategory) {
+            const category = purposeCategories[purposeCategory];
+            return `<span class="purpose-badge" style="background-color: ${category.badge};">${category.name}</span>`;
+        }
+
+        function highlightText(text, searchTerm) {
+            if (!searchTerm) return text;
+            const regex = new RegExp(`(${searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+            return text.replace(regex, '<span class="highlight">$1</span>');
+        }
+
+        function renderTable(data, searchTerm = '') {
+            const tbody = document.getElementById('tableBody');
+            
+            if (data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="no-results">No interventions found matching your criteria.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = data.map(intervention => `
+                <tr>
+                    <td class="intervention-name">${highlightText(intervention.name, searchTerm)}</td>
+                    <td class="purpose-category-col">
+                        ${getPurposeBadge(intervention.purposeCategory)}
+                    </td>
+                    <td class="purpose">${highlightText(intervention.purpose, searchTerm)}</td>
+                    <td class="method">${highlightText(intervention.method, searchTerm)}</td>
+                    <td class="timescale">
+                        ${getTimescaleBadge(intervention.category)}
+                        <div style="margin-top: 8px; font-size: 13px; color: #6c757d;">
+                            ${highlightText(intervention.timescale, searchTerm)}
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function updateStats() {
+            const combineSubcategories = document.getElementById('combineSubcategories').checked;
+            
+            if (combineSubcategories) {
+                // Count actual interventions represented
+                let actualCount = 0;
+                currentData.forEach(item => {
+                    if (item.isCombined) {
+                        actualCount += item.relatedCount;
+                    } else {
+                        actualCount += 1;
+                    }
+                });
+                document.getElementById('totalCount').textContent = interventions.length;
+                document.getElementById('visibleCount').textContent = actualCount + ' (in ' + currentData.length + ' groups)';
+            } else {
+                document.getElementById('totalCount').textContent = interventions.length;
+                document.getElementById('visibleCount').textContent = currentData.length;
+            }
+        }
+
+        function jumpToIntervention(interventionName) {
+            // Switch to table view
+            switchView('table');
+            
+            // Clear any filters
+            document.getElementById('searchInput').value = '';
+            document.getElementById('purposeFilter').value = 'all';
+            document.getElementById('timescaleFilter').value = 'all';
+            
+            // Show all interventions
+            currentData = [...interventions];
+            renderTable(currentData);
+            updateStats();
+            
+            // Find the intervention row and highlight it
+            setTimeout(() => {
+                const rows = document.querySelectorAll('#tableBody tr');
+                rows.forEach(row => {
+                    const nameCell = row.querySelector('.intervention-name');
+                    if (nameCell && nameCell.textContent.trim() === interventionName) {
+                        // Remove any existing highlights
+                        rows.forEach(r => r.classList.remove('flash-highlight'));
+                        
+                        // Add highlight to this row
+                        row.classList.add('flash-highlight');
+                        
+                        // Scroll to the row
+                        row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                });
+            }, 100);
+        }
+
+        function filterData() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const purposeFilter = document.getElementById('purposeFilter').value;
+            const timescaleFilter = document.getElementById('timescaleFilter').value;
+            const combineSubcategories = document.getElementById('combineSubcategories').checked;
+
+            let filteredData = interventions.filter(intervention => {
+                const matchesSearch = !searchTerm || 
+                    intervention.name.toLowerCase().includes(searchTerm) ||
+                    intervention.purpose.toLowerCase().includes(searchTerm) ||
+                    intervention.method.toLowerCase().includes(searchTerm) ||
+                    intervention.timescale.toLowerCase().includes(searchTerm) ||
+                    purposeCategories[intervention.purposeCategory].name.toLowerCase().includes(searchTerm);
+
+                const matchesPurpose = purposeFilter === 'all' || intervention.purposeCategory === purposeFilter;
+                const matchesTimescale = timescaleFilter === 'all' || intervention.category === timescaleFilter;
+
+                return matchesSearch && matchesPurpose && matchesTimescale;
+            });
+
+            // If combine subcategories is checked, group by subcategory and show only first of each
+            if (combineSubcategories) {
+                const seenSubcategories = new Set();
+                const combinedData = [];
+                
+                filteredData.forEach(intervention => {
+                    if (intervention.subcategory) {
+                        if (!seenSubcategories.has(intervention.subcategory)) {
+                            seenSubcategories.add(intervention.subcategory);
+                            // Create a combined entry
+                            const relatedInterventions = filteredData.filter(i => i.subcategory === intervention.subcategory);
+                            const combinedIntervention = {
+                                ...intervention,
+                                name: intervention.subcategory + ' (' + relatedInterventions.length + ' methods)',
+                                isCombined: true,
+                                originalName: intervention.name,
+                                relatedCount: relatedInterventions.length
+                            };
+                            combinedData.push(combinedIntervention);
+                        }
+                    } else {
+                        combinedData.push(intervention);
+                    }
+                });
+                
+                currentData = combinedData;
+            } else {
+                currentData = filteredData;
+            }
+
+            renderTable(currentData, document.getElementById('searchInput').value);
+            updateStats();
+        }
+
+        // Initialize the data with categories
+        interventions.forEach(intervention => {
+            intervention.category = getTimescaleCategory(intervention.timescale);
+        });
+
+        // Event listeners
+        document.getElementById('searchInput').addEventListener('input', filterData);
+        document.getElementById('purposeFilter').addEventListener('change', filterData);
+        document.getElementById('timescaleFilter').addEventListener('change', filterData);
+
+        // Initial render
+        switchView('categories');
+
+        // Export functionality
+        function showExportDialog() {
+            document.getElementById('exportModal').style.display = 'block';
+        }
+
+        function closeExportDialog() {
+            document.getElementById('exportModal').style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('exportModal');
+            if (event.target == modal) {
+                closeExportDialog();
+            }
+        }
+
+        function exportToCSV() {
+            // Get selected columns
+            const columns = {
+                name: document.getElementById('col-name').checked,
+                purposeCategory: document.getElementById('col-purpose-category').checked,
+                subcategory: document.getElementById('col-subcategory').checked,
+                purpose: document.getElementById('col-purpose').checked,
+                method: document.getElementById('col-method').checked,
+                timescale: document.getElementById('col-timescale').checked,
+                category: document.getElementById('col-category').checked
+            };
+
+            // Build CSV header
+            const headers = [];
+            if (columns.name) headers.push('Intervention Name');
+            if (columns.purposeCategory) headers.push('Purpose Category');
+            if (columns.subcategory) headers.push('Subcategory');
+            if (columns.purpose) headers.push('Purpose');
+            if (columns.method) headers.push('Method');
+            if (columns.timescale) headers.push('Timescale');
+            if (columns.category) headers.push('Timescale Category');
+
+            // Build CSV rows
+            const rows = [headers];
+            
+            // Use currentData to export only filtered results
+            currentData.forEach(intervention => {
+                const row = [];
+                
+                if (columns.name) {
+                    row.push(escapeCSV(intervention.name));
+                }
+                if (columns.purposeCategory) {
+                    row.push(escapeCSV(purposeCategories[intervention.purposeCategory].name));
+                }
+                if (columns.subcategory) {
+                    row.push(escapeCSV(intervention.subcategory || ''));
+                }
+                if (columns.purpose) {
+                    row.push(escapeCSV(intervention.purpose));
+                }
+                if (columns.method) {
+                    row.push(escapeCSV(intervention.method));
+                }
+                if (columns.timescale) {
+                    row.push(escapeCSV(intervention.timescale));
+                }
+                if (columns.category) {
+                    row.push(escapeCSV(intervention.category));
+                }
+                
+                rows.push(row);
+            });
+
+            // Convert to CSV string
+            const csvContent = rows.map(row => row.join(',')).join('\n');
+            
+            // Create blob and download
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            
+            link.setAttribute('href', url);
+            link.setAttribute('download', 'coaching_interventions_export.csv');
+            link.style.visibility = 'hidden';
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            closeExportDialog();
+        }
+
+        function escapeCSV(str) {
+            if (str == null) return '';
+            
+            // Convert to string
+            str = String(str);
+            
+            // If contains comma, newline, or quotes, wrap in quotes
+            if (str.includes(',') || str.includes('\n') || str.includes('"')) {
+                // Escape quotes by doubling them
+                str = str.replace(/"/g, '""');
+                return '"' + str + '"';
+            }
+            
+            return str;
+        }
+    </script>
+</body>
+</html>
